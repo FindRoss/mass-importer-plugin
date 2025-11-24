@@ -3,7 +3,7 @@
  * Plugin Name: Mass Import Posts (JSON) - Simple
  * Description: Upload a JSON file to create posts with title and content.
  * Version: 1.0
- * Author: ChatGPT
+ * Author: Ross Findlay
  */
 
 if (!defined('ABSPATH')) exit;
