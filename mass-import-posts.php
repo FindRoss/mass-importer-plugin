@@ -87,6 +87,13 @@ class Mass_Import_Posts_Simple {
 
             $title = trim($item['title'] ?? '');
             $content = $item['content'] ?? '';
+            $expiry_date = $item['expiry_date'] ?? null; // Expects 'Y-m-d H:i:s'
+            $excerpt = trim($item['excerpt'] ?? '');
+
+
+            // Good for security
+            // $allowed_tags = '<strong><em>';
+            // $excerpt = strip_tags($excerpt, $allowed_tags); // Remove all EXCEPT strong and em
 
             if (empty($title)) {
                 $failed++;
@@ -97,8 +104,25 @@ class Mass_Import_Posts_Simple {
                 'post_title' => $title,
                 'post_content' => $content,
                 'post_type' => 'post',
-                'post_status' => 'publish',
+                'post_status' => 'draft',
+                'post_excerpt' => $excerpt,
             ), true);
+
+            // The post was created successfully. Now, update the ACF field.
+            // --- ACF Meta Addition ---
+            if (!is_wp_error($post_id) && $post_id > 0 && !empty($expiry_date)) {
+                // $expiry_date is the value in the expected 'Y-m-d H:i:s' format.
+                if (function_exists('update_field')) {
+                    update_field('expiry_date', $expiry_date, $post_id);
+                }
+            }
+
+            // Update Yoast SEO Meta
+            if (!is_wp_error($post_id) && $post_id > 0) {
+                if (defined('WPSEO_VERSION')) {
+                    update_post_meta($post_id, '_yoast_wpseo_metadesc', $excerpt);
+                }
+            }
 
             if (is_wp_error($post_id)) {
                 $failed++;
