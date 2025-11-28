@@ -92,11 +92,6 @@ class Mass_Import_Posts_Simple {
             $excerpt = trim($item['excerpt'] ?? '');
             $post_type = trim($item['post_type'] ?? '');
 
-
-            // Good for security
-            // $allowed_tags = '<strong><em>';
-            // $excerpt = strip_tags($excerpt, $allowed_tags); // Remove all EXCEPT strong and em
-
             if (empty($title)) {
                 $failed++;
                 continue;
@@ -159,3 +154,14 @@ class Mass_Import_Posts_Simple {
 }
 
 new Mass_Import_Posts_Simple();
+
+
+// Bonus fields
+// bonus_title - text
+// bonus - text
+// bonus_plus - text
+// expiry_date - date - Y-m-d H:i:s format
+// code - text
+// exclusive - true / false (?)
+// turnover - text
+// 
