@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Mass Import Posts (JSON) - Simple
  * Description: Upload a JSON file to create posts with title and content.
- * Version: 1.0
+ * Version: 1.1
  * Author: Ross Findlay
  */
 
@@ -25,7 +25,7 @@ class Mass_Import_Posts_Simple {
         ?>
         <div class="wrap">
             <h1>Mass Import Posts</h1>
-            <p>Upload a JSON file containing an array of post objects with <code>title</code> and <code>content</code> fields.</p>
+            <p>Upload a JSON file containing an array of post objects with <code>title</code>, <code>content</code>, <code>excerpt</code>, <code>post_type</code>, and <code>expiry_date</code>  fields.</p>
 
             <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" enctype="multipart/form-data">
                 <?php wp_nonce_field('mip_upload'); ?>
@@ -41,19 +41,20 @@ class Mass_Import_Posts_Simple {
                 <p><input type="submit" class="button button-primary" value="Import Posts"></p>
             </form>
 
-            <h2>JSON Example</h2>
+            <h2>Example of .json object</h2>
             <pre>
-            [
-                {
-                    "title": "My First Post",
-                    "content": "<p>This is the post content</p>"
-                },
-                {
-                    "title": "My Second Post",
-                    "content": "<p>More content here</p>"
-                }
-            ]
-        </pre>
+   
+   [
+        {
+            "post_type": "post",
+            "title": "Leaving the Shire",
+            "content": "A detailed account of the initial company—Frodo, Sam, Merry, and Pippin—as they set out from their quiet home, unaware of the vast conflict that awaits them.",
+            "excerpt" "An account of the start of a holiday",
+            "expiry_date": "2028-12-24 16:00:00"
+        }
+    ]
+            </pre>
+            Note the expiry_date must be in <code>Y-m-d H:i:s</code> format
         </div>
 
     <?php }
@@ -89,6 +90,7 @@ class Mass_Import_Posts_Simple {
             $content = $item['content'] ?? '';
             $expiry_date = $item['expiry_date'] ?? null; // Expects 'Y-m-d H:i:s'
             $excerpt = trim($item['excerpt'] ?? '');
+            $post_type = trim($item['post_type'] ?? '');
 
 
             // Good for security
@@ -101,10 +103,10 @@ class Mass_Import_Posts_Simple {
             }
 
             $post_id = wp_insert_post(array(
-                'post_title' => $title,
+                'post_title'   => $title,
                 'post_content' => $content,
-                'post_type' => 'post',
-                'post_status' => 'draft',
+                'post_type'    => $post_type,
+                'post_status'  => 'draft',
                 'post_excerpt' => $excerpt,
             ), true);
 
